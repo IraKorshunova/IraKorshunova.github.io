@@ -1,7 +1,7 @@
 ---
 layout: page
 title: "Contact"
-description: "Have questions? I have answers (maybe)."
+description: ""
 header-img: "img/contact-bg.jpg"
 ---
 

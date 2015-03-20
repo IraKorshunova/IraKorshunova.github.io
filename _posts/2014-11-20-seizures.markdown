@@ -6,3 +6,45 @@ author:     "Ira Korshunova"
 header-img: "img/post-bg-01.jpg"
 ---
 
+The [American Epilepsy Society Seizure Prediction Challenge](http://www.kaggle.com/c/seizure-prediction) ended a week ago and I finished 10th out of 504 teams.
+In this blog post I will briefly outline the problem and my solution.
+
+## The problem
+Epilepsy is one of the most commonly diagnosed neurological disorders. It is characterized by the occurrence of spontaneous seizures, and to make matters even worse nearly 30% of patients cannot controll their seizures with medication. In such cases, seizure forecasting systems are vitally important, since they allow patients to avoid dangerous activities and bring themselves in a safe environment before a seizure starts. TODO: what these systems do.
+
+There is much controversy about seizure prediction in a literature, so ... organized a competitions, which goal was to build a model able to classify between pre-seizure and non-seizure states of the brain activity measured with the EEG. Further we will use a term *preictal* to denote a pre-seizure state and *interictal* for a normal EEG data without any signs of seizure activity. 
+
+Preictal state in our setting was defined to be one hour before the seizure onset with a 5 minute horizont. 
+
+![Figure 2](/img/Preictal1hr1m_annot.png)
+
+For each 10-minute clip from preictal or interictal one hour sequence  we were asked to assign a probability that a given clip is preictal. In the training data the timing of each clip was known, however it wasn't given for the test data clips, so we couldn't use the timing information when building a classifier. 
+
+The evaluation metric was the area under the ROC curve (AUC) calculated for 7 available patients as a one big group (I will call it global AUC). It implied an additional challenge, since predictions from patient-specific models in general were not well calibrated. Training a single classifier for all patients a priori could give only worse scores because brain activity is a highly individual. This metric требовать additional robustness against the choice of the classification threshold, which is crucial in a forecastin
+ 
+
+
+## The solution: convnets!
+The idea of using convnets for EEG was inspired by the research of Sander Dieleman on MIR. In his case the audio signal was one-dimensional, unlike the EEG signal, which had 15-24 channels depending on the patient. Therefore the information from different channels has to be combined in some way. I tried various convnets architectures, however most success I could get when merging features from different channels on the very first layer. 
+
+The input features itself were very simple and similar to those in [Howbert et al., 2014](link): EEG signal was partitioned into nonoverlapping 1 min frames and transformed with DFT. The resulted amplitude spectrum was averaged within 6 () frequency bands: delta (0.1-4 Hz), theta (4-8 Hz), alpha (8-12 Hz), beta (12-30 Hz), low­gamma (30-70 Hz) and high­gamma (70-180 Hz). Thus, the dimension of the data clip was equal to Nx6x10 (channels x  frequency bands x time frames). An example of one network is given below.  
+
+![Figure 1](/img/model2_annot.png)
+
+Its first layer (C1) performs convolution in a time dimension over all N channels and all 6 frequency bands, so the shape of its filters is 6xNx1. C1 has 16 feature maps each of shape 1x10. The second layer (C2) performs convolution with 32 filters of size 16x2. C2 is followed by a global temporal pooling layer GP3, which computes the following statistics: mean, maximum, minimum, variance, geometrical mean, L2 norm over 9 values in each feature map from C2. GP3 is fully connected with 128 units in F4 layer. C1 and C2 layers were composed from ReLUs, tanh activation was used in the hidden layer.
+
+### Training
+TODO. We used  mini-batches of 10 examples and trained the network with ADADELTA method. Inputs to the network were previously standardized. Dropout was used in the last 2 layers.
+
+### Model averaging
+As a final model I used a geometric mean of the predictions (normalized to 0-1 range for each subject) obtained from 11 convnets with different hyperparameters: number of feature maps or hidden units in each layer, strides in convolutional layers, amount of dropout and weight decay, etc. Models were also trained on a different data, for example, I could take DFT in 0.5 or 2 minute windows or change the frequency bands partition by dividing large gamma bands into two. To augment the training set I took the overlaps between consequtive clips in the same one hour sequence, regretfully I didn't do it realtime.
+
+## Caveats
+
+In this competition one could easily overfit to the public test set, which explains a large shake up in the [public](link)/[private](link) leaderboard standings.
+Moreover, cross-validation, when complete sequences would go to the validation or train parts, could track the test score with varying sucess. Simple validation wasn't even supposed to work. So what is the reason for this phenomena? The problem lies in the properties of the EEG data: clips, which are close in time are more similar to one another than to the distant clips because brain activity constantly changes. For instance, it implies that model, which can perfectly predict seizures this week, may become useless the week after. Sadly, but in many papers I've seen on seizure prediction, this fact remains untold, so authors report the cross-validation results, which are unlikely to be true at test time, when the device is actually implanted in one's brain.      
+
+
+
+
+
