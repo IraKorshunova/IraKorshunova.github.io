@@ -3,10 +3,11 @@ layout:     post
 title:      "Plankton classification on Kaggle"
 date:       2015-03-17 12:00:00
 author:     "Ira Korshunova"
-header-img: "img/post-bg-01.jpg"
+header-img: "img/plankton3.jpg"
 ---
 Our team from [Reservoir Lab](http://reslab.elis.ugent.be/) consisting of Sander, Aaron, Jeroen, Lionel, Pieter, Jonas and
 myself has won the [National Data Science Bowl](https://www.kaggle.com/c/datasciencebowl) competition on Kaggle!
-Read an amazing post in [Sander's blog](http://reslab.elis.ugent.be/). 
+
+Read the description in Sander's amazing [blog post](http://benanne.github.io/2015/03/17/plankton.html). 
 
 
