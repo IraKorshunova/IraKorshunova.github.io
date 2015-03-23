@@ -1,6 +1,6 @@
 ---
 layout:     post
-title:      "Plankton classification on Kaggle"
+title:      "Plankton classification"
 date:       2015-03-17 12:00:00
 author:     "Ira Korshunova"
 header-img: "img/plankton3.jpg"
