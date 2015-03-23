@@ -1,6 +1,6 @@
 # Site settings
 title: Ira Korshunova
-header-img: img/home-bg.jpg
+header-img: img/yoda_home.jpg
 email: irene.korshunova@gmail.com
 description: "Write your site description here. It will be used as your sites meta description as well!"
 baseurl: ""
@@ -13,4 +13,5 @@ markdown: kramdown
 highlighter: pygments
 permalink: pretty
 paginate: 5
+excerpt_separator: <!--more-->
 exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]

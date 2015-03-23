@@ -8,6 +8,7 @@ header-img: "img/plankton3.jpg"
 Our team from [Reservoir Lab](http://reslab.elis.ugent.be/) consisting of Sander, Aaron, Jeroen, Lionel, Pieter, Jonas and
 myself has won the [National Data Science Bowl](https://www.kaggle.com/c/datasciencebowl) competition on Kaggle!
 
-Read the description in Sander's amazing [blog post](http://benanne.github.io/2015/03/17/plankton.html). 
+<!--more-->
+Read our description in Sander's amazing [blog post](http://benanne.github.io/2015/03/17/plankton.html). 
 
 
