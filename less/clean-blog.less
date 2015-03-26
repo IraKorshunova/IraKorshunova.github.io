@@ -29,12 +29,15 @@ h6 {
 a {
 	color: @gray-dark;
 	text-decoration: none;
-    border-bottom: 1px dotted @gray-dark;
+    
 	&:hover,
 	&:focus {
 		color: @brand-primary;
 		text-decoration:none;
 		border-bottom-color: @brand-primary;
+	}
+	p & {
+		border-bottom: 1px dotted @gray-dark;
 	}
 }
 
