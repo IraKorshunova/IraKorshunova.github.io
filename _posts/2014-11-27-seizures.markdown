@@ -11,7 +11,7 @@ In this post I will briefly outline the problem and my solution.
 <!--more-->
 
 ## The problem
-Epilepsy is one of the most commonly diagnosed neurological disorders. It is characterized by the occurrence of spontaneous seizures, and to make matters even worse nearly 30% of patients cannot control their seizures with medication. In such cases, seizure forecasting systems are vitally important. Their purpose is to trigger a warning when a probability of the forthcoming seizure exceeds a predefined threshold, so patients can avoid [dangerous activities](https://www.youtube.com/watch?v=55QUQHm2B5A) during this period. 
+Epilepsy is one of the most commonly diagnosed neurological disorders. It is characterized by the occurrence of spontaneous seizures, and to make matters even worse nearly 30% of patients cannot control their seizures with medication. In such cases, seizure forecasting systems are vitally important. Their purpose is to trigger a warning when a probability of the forthcoming seizure exceeds a predefined threshold, so patients have time to plan their activities. 
 
 As a primary challenge towards building a seizure prediction device is the ability to classify between pre-seizure and non-seizure states of the brain activity measured with the EEG. Further, we will use a term *preictal* to denote a pre-seizure state and *interictal* for a normal EEG data without any signs of seizure activity. 
 
