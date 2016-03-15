@@ -1,14 +1,14 @@
 ---
 layout:     post
 title:      "Diagnosing Heart Diseases with Deep Neural Networks"
-date:       2016-03-15 12:00:00
+date:       2016-03-15 1:00:00
 author:     "Ira Korshunova"
 header-img: "img/heart.gif"
 tags: [deep learning, convolutional neural networks, convnets, Theano, Kaggle, National Data Science Bowl, plankton, competition]
 ---
 
 
-The [Second National Data Science Bowl](https://www.kaggle.com/c/second-annual-data-science-bowl), a data science competition where the goal was to automatically determine cardiac volumes from MRI scans, has just ended. We participated with a team of 4 members from the [Data Science lab](http://datasciencelab.ugent.be/MembersList) at Ghent University in Belgium and finished Xst of Y competing teams.
+The [Second National Data Science Bowl](https://www.kaggle.com/c/second-annual-data-science-bowl), a data science competition where the goal was to automatically determine cardiac volumes from MRI scans, has just ended. We participated with a team of 4 members from the [Data Science lab](http://datasciencelab.ugent.be/MembersList) at Ghent University in Belgium and finished 2nd!
 
 <!--more-->
 
