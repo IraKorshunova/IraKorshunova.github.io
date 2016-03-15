@@ -1,9 +1,10 @@
 ---
 layout:     post
 title:      "Diagnosing Heart Diseases with Deep Neural Networks"
-date:       2016-03-14 12:00:00
+date:       2016-03-15 12:00:00
 author:     "Ira Korshunova"
 header-img: "img/heart.gif"
+tags: [deep learning, convolutional neural networks, convnets, Theano, Kaggle, National Data Science Bowl, plankton, competition]
 ---
 
 
@@ -11,7 +12,7 @@ The [Second National Data Science Bowl](https://www.kaggle.com/c/second-annual-d
 
 <!--more-->
 
-The team *kunsthart* (*artificial heart* in English) consisted of [Ira Korshunova](https://www.kaggle.com/golondrina), [Jeroen Burms](https://www.kaggle.com/jburms), Jonas Degrave ([@317070](https://twitter.com/317070)), 3 PhD students, and professor [Joni Dambre](https://twitter.com/jonidambre). It's also a follow-up of last year's team [Deep Sea](http://benanne.github.io/2015/03/17/plankton.html), which finished in first place for the First National Data Science Bowl.
+The team *kunsthart* (*artificial heart* in English) consisted of [Ira Korshunova](https://www.kaggle.com/golondrina), [Jeroen Burms](https://www.kaggle.com/jburms), Jonas Degrave ([@317070](https://twitter.com/317070)), 3 PhD students, and professor [Joni Dambre](https://twitter.com/jonidambre). It's also a follow-up of last year's team [≋ Deep Sea ≋](http://benanne.github.io/2015/03/17/plankton.html), which finished in first place for the First National Data Science Bowl.
 
 ## Overview
 
