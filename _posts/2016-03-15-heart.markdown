@@ -124,6 +124,8 @@ As opposed to single slice models, patient models try to make predictions based 
 
 Our solution to this problem consists of a clever way to merge predictions from multiple slices. Instead of having the network learn how to compute the volume based on the results of the individual slices, we designed a layer which combines the areas of consecutive cross-sections of the heart using a [truncated cone approximation](https://en.wikipedia.org/wiki/Frustum). 
 
+Basically, the slice models have to estimate the area $$A_i$$ (and standard deviation thereof) of the cross-section of the heart in a given slice $$i$$. For each pair of consecutive slices $$i$$ and $$i+1$$, we estimate the volume of the heart between them as $$V_i = ⅓*h_{i, i+1}*(A_i + \sqrt{A_i A_{i+1}} + A_{i+1})$$, where $$h_{i, i+1}$$ is the distance between the slices. The total volume is then given by $$V = \sum_i V_i$$. 
+
 Ordering the SAX slices and finding the distance between them was achieved through looking at the *SliceLocation* metadata fields, but this field was not very reliable in finding the distance between slices, neither was the *SliceThickness*. We looked for the two slices that were furthest apart, drew a line between them, and projected every other slice onto this line. This way, we estimated the distance between two slices ourselves.
 
 Our best single model achieved a local validation score of 0.0105 using this approach, although this is no longer a very good leaderboard estimations, since our local validation set contained relatively few outliers compared to the public leaderboard in the first round. It had the following architecture:
