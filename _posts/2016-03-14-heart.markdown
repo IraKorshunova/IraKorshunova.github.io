@@ -70,6 +70,7 @@ The provided images have varying sizes and resolutions, and do not only show the
 * applying a zoom factor such that all images have the same resolution in millimeters
 * finding the region of interest and extracting a patch centered around it
 * data augmentation
+* contrast normalization
 
 To find the correct zooming factor, we made use of the *PixelSpacing* metadata field, which specifies the image resolution. Further we will explain our approach to ROI detection and data augmentation.  
 
