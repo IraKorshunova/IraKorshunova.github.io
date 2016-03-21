@@ -162,7 +162,7 @@ Our best single model achieved a local validation score of 0.0105 using this app
  
 Oftentimes, we did not train patient models from scratch. We found that initializing patient models with single slice models helps against overfitting, and severely reduces training time of the patient model. 
 
-The architecture we described above was one of the best for us. To deversify our models, some of the good things we tried include:
+The architecture we described above was one of the best for us. To diversify our models, some of the good things we tried include:
 
 * processing each frame separately, and taking the minimum and maximum at some point in the network to compute systole and diastole
 * sharing some of the dense layers between the systole and diastole networks as well
@@ -224,7 +224,7 @@ For the second round of the competition, we were allowed to retrain our models o
 
 For our first submission, we splitted of a new validation set. The resulting models were combined using our first ensembling strategy.
 
-For our second submission, we trained our models on the entire training set (i.e. there was no validation split). We assembled them using using the second ensembling method. Since we had no validation set to optimise the weights of the ensemble, we computed the weights by training an ensemble on the models we trained with a validation split, and transferred them over. 
+For our second submission, we trained our models on the entire training set (i.e. there was no validation split). We assembled them using the second ensembling method. Since we had no validation set to optimise the weights of the ensemble, we computed the weights by training an ensemble on the models we trained with a validation split, and transferred them over. 
 
 ## Software and hardware<a name="soft"></a>
 
