@@ -228,7 +228,7 @@ For our second submission, we trained our models on the entire training set (i.e
 
 ## Software and hardware<a name="soft"></a>
 
-We used [Lasagne](http://lasagne.readthedocs.org/en/latest/index.html), [Python](https://www.python.org/), [Numpy](http://www.numpy.org/) and [Theano](http://deeplearning.net/software/theano/) to implement our solution, in combination with the [cuDNN](https://developer.nvidia.com/cudnn) library. We also used [PyCUDA](https://mathema.tician.de/software/pycuda/) for a few custom kernels. We made use of [scikit-image](http://scikit-image.org/) for pre-processing and augmentation, and [ghalton](https://github.com/fmder/ghalton) for quasi-random number generation. 
+We used [Lasagne](http://lasagne.readthedocs.org/en/latest/index.html), [Python](https://www.python.org/), [Numpy](http://www.numpy.org/) and [Theano](http://deeplearning.net/software/theano/) to implement our solution, in combination with the [cuDNN](https://developer.nvidia.com/cudnn) library. We also used [PyCUDA](https://mathema.tician.de/software/pycuda/) for a few custom kernels. We made use of [scikit-image](http://scikit-image.org/) for pre-processing and augmentation.
 
 We trained our models on the NVIDIA GPUs that we have in the lab, which include GTX TITAN X, GTX 980, GTX 680 and Tesla K40 cards. We would like to thank [Frederick Godin](http://www.fredericgodin.com/) and [Elias Vansteenkiste](https://twitter.com/sailenav) for lending us a few extra GPUs in the last week of the competition.
 
@@ -236,4 +236,7 @@ We trained our models on the NVIDIA GPUs that we have in the lab, which include 
 ## Conclusion<a name="conclusion"></a>
 
 In this competition, we tried out different ways to preprocess data and combine information from different data sources, and thus, we learned a lot in this aspect. However, we feel that there is still a room for improvement. For example, we observed that most of our error still hails from a select group of patients. These include the ones for which our ROI extraction fails. In hindsight, hand-labeling the training data and training a network to do the ROI extraction would be a better approach, but we wanted to sidestep doing a lot of this kind of manual effort as much as possible. In the end, labeling the data would probably have been less time intensive.
+
+UPDATE (March 23): the code is now available on GitHub: [https://github.com/317070/kaggle-heart](https://github.com/317070/kaggle-heart)
+
 
