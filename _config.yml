@@ -7,6 +7,7 @@ baseurl: ""
 url: "http://irakorshunova.github.io"
 github_username:  IraKorshunova
 linkedin: https://www.linkedin.com/in/IraKorshunova
+twitter_username: iskorna
 
 # Build settings
 markdown: kramdown
