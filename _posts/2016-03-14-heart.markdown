@@ -32,8 +32,6 @@ This blog post is going to be long, here is a clickable overview of different se
 
 The goal of this year's Data Science Bowl was to estimate minimum (end-systolic) and maximum (end-diastolic) volumes of the left ventricle from a set of MRI-images taken over one heartbeat. These volumes are used by practitioners to compute an ejection fraction: fraction of outbound blood pumped from the heart with each heartbeat. This measurement can predict a wide range of cardiac problems. For a skilled cardiologist analysis of MRI scans can take up to 20 minutes, therefore, making this process automatic is obviously useful.
 
-<iframe src="https://www.youtube.com/embed/dFu_5T0ODrM" frameborder="0" allowfullscreen="" id="fitvid412187"></iframe>
-
 Unlike the previous Data Science Bowl, which had very clean and voluminous data set, this year's competition required a lot more focus on dealing with inconsistencies in the way the very limited number of data points were gathered. As a result, most of our efforts went to trying out different ways to preprocess and combine the different data sources.
 
 ### The data
