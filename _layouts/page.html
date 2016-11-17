@@ -23,14 +23,6 @@ layout: default
             <span class="subheading" >{{ page.description }}</span>
         {% endif %}
         <ul class="social list-inline text-center">
-            <li>
-                <a href="{{ "/feed.xml" | prepend: site.baseurl }}">
-                    <span class="fa-stack fa-lg">
-                        <i class="fa fa-circle fa-stack-2x fa-inverse"></i>
-                        <i class="fa fa-rss fa-stack-1x"></i>
-                    </span>
-                </a>
-            </li>
             {% if site.twitter_username %}
             <li>
                 <a href="https://twitter.com/{{ site.twitter_username }}">
