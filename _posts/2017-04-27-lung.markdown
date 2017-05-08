@@ -6,6 +6,6 @@ author:     "Ira Korshunova"
 header-img: "img/lung.jpg"
 ---
 Our team has finished 9th in the third [Data Science Bowl](https://www.kaggle.com/c/data-science-bowl-2017) competition on Kaggle.
-Read our description [here](https://eliasvansteenkiste.github.io/machine%20learning/lung-cancer-pred/). 
+Read about our approach [here](https://eliasvansteenkiste.github.io/machine%20learning/lung-cancer-pred/). 
 
 
