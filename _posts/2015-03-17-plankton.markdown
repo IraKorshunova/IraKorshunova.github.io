@@ -5,7 +5,7 @@ date:       2015-03-17 12:00:00
 author:     "Ira Korshunova"
 header-img: "img/plankton3.jpg"
 ---
-Our team from [Reservoir Lab](http://reslab.elis.ugent.be/) consisting of Sander, Aaron, Jeroen, Lionel, Pieter, Jonas and
+Our team from Ghent University consisting of Sander, Aaron, Jeroen, Lionel, Pieter, Jonas and
 myself has won the [National Data Science Bowl](https://www.kaggle.com/c/datasciencebowl) competition on Kaggle!
 
 <!--more-->
