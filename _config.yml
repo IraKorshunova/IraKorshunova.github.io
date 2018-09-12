@@ -1,9 +1,8 @@
 # Site settings
-title: Ira Korshunova
+title: Iryna Korshunova
 header-img: img/yoda_home.jpg
 email: irene.korshunova@gmail.com
-description: ""
-baseurl: ""
+
 url: "http://irakorshunova.github.io"
 github_username:  IraKorshunova
 linkedin: https://www.linkedin.com/in/IraKorshunova
@@ -11,8 +10,10 @@ twitter_username: iskorna
 
 # Build settings
 markdown: kramdown
-highlighter: pygments
+highlighter: rouge
 paginate: 5
+paginate_path: blog/page:num
 excerpt_separator: <!--more-->
 exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
-<link rel="stylesheet" href="{{ "/assets/css/clean-blog.css, " | prepend: site.baseurl }}"
+permalink: /blog/:title
+#<link rel="stylesheet" href="{{ "/assets/css/clean-blog.css, " | prepend: site.baseurl }}"
