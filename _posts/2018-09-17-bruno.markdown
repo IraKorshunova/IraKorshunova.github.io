@@ -81,7 +81,7 @@ $$p(\mathbf x) = p(\mathbf z) \Bigg| \det \frac{\partial f(\mathbf x)}{\partial 
 
 Essentially, those are all the ingredients! A powerful bijection $$f: \mathcal{X} \rightarrow \mathcal{Z}$$ plus $$D$$ independent exchangeable GPs<sup>&nbsp;[1](#myfootnote1)</sup> in the latent space $$\mathcal Z$$  make a nice exchangeable model which we called BRUNO: **B**ayesian **R**ec**U**rrent **N**eural m**O**del (TBH, we just wanted to name it after Bruno de Finetti). Here is a schematic:
 
-![](/img/schematic.png)
+![](/img/bruno/schematic_gp.png)
 
 Because we have the predictive probabilities at every step, we can train BRUNO using MLE, where we maximise the likelihood of the inputs with respect to the Real NVP parameters and parameters of GPs kernels: $$\rho$$ and $$v$$ for every of the $$D$$ latent dimensions. 
 
