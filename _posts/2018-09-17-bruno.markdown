@@ -1,0 +1,173 @@
+---
+layout:     post
+hidden:     true
+title:      "BRUNO: A Deep Recurrent Model for Exchangeable Data"
+date:       2018-09-17 12:00:00
+author:     "Ira Korshunova"
+header-img: "img/bruno.png"
+---
+
+<!--more-->
+
+This post gives a short overview of our recent paper: 
+
+[BRUNO: A Deep Recurrent Model for Exchangeable Data](https://arxiv.org/abs/1802.07535) <br>by I. Korshunova, J. Degrave, F. Huszár, Y. Gal, A. Gretton, and J. Dambre
+
+where we presented a *provably exchangeable* model whose:
+
+* predictive distribution $$p(x_n \mid x_{1:n-1})$$ is tractable to evaluate and can be sampled from with a linear complexity in the number of data points we condition on
+* training does not require variational approximations
+* memory complexity is constant thanks to its recurrent nature, i.e. after processing an observation $$x_i$$ we don't have to store it in memory.
+
+## Motivation
+
+We will give a two ways to motivate why BRUNO is an interesting model. 
+
+### 1. Exchangeability and Bayesian computations
+
+We started from a problem posed in [this inFERENCe blogpost](https://www.inference.vc/exchangeable-processes-via-neural-networks/): is it possible to design an exchangeable RNN? [Ferenc](https://www.inference.vc/) explains it very well so please go ahead and read his blogpost. Below we will briefly repeat main definitions and how exchangeability is connected to Bayesian inference. 
+
+A sequence of random variables $$x_1, x_2, x_3, \dots$$ is said to be exchangeable if for all $$n$$ and all permutations $$\pi$$
+
+$$p(x_1,\dots , x_n) = p(x_{\pi(1)}, \dots, x_{\pi(n)}),$$
+
+meaning that the joint probability remains the same under any permutation of the sequence. <!---So the order in which you observe the sequence does not change the probability of the sequence.-->
+
+Obviously, i.i.d. sequences are exchangeable. However, the converse is false: exchangeable sequences can be correlated. 
+
+>One textbook example of an exchangeable sequence is a sequence of $$x_1,\dots , x_n$$, which jointly has a multivariate normal distribution $$\mathcal{N}_n(\mathbf 0, \mathbf \Sigma)$$ with a *compound symmetry* -- or we will simply call it *exchangeable* -- covariance structure:
+>
+>$$\mathbf \Sigma = \begin{pmatrix}
+    v & \rho & \ldots & \rho & \rho \\
+    \rho & v & \ldots & \rho & \rho \\
+    \vdots & \vdots & \ldots & \vdots & \vdots \\
+    \rho & \rho & \ldots & v & \rho \\
+    \rho & \rho & \ldots & \rho & v
+\end{pmatrix}, $$
+>
+>where $$0 \le \rho < v$$. 
+
+**De Finetti’s theorem** states that every exchangeable process -- which is an infinite sequence of random variables -- satisfies the following:
+
+$$p(x_1,\dots,x_n)= \int p(\theta) \prod_{i=1}^n{p(x_i|\theta)d\theta}, \quad\quad\quad(1)$$
+
+where $$\theta$$ is some parameter conditioned on which $$x_i$$'s become i.i.d.
+
+>In the Gaussian example above, one can show that $$x_1,\dots, x_n$$ are i.i.d. with $$x_i \sim \mathcal N (\theta, v − \rho)$$ conditioned on $$\theta \sim \mathcal N (0, \rho)$$.
+
+By conditioning both sides of Eq.1 on $$x_{1:n-1}$$, de Finetti's theorem can be written in terms of predictive distributions:  
+
+$$p(x_n \mid x_{1:n-1})= \int p(x_{n}\mid \theta)p(\theta \mid x_{1:n-1})d\theta. $$
+
+This is exactly the posterior predictive distribution, where we marginalised the likelihood of $$x_n$$ given $$\theta$$ with respect to the posterior distribution of $$\theta$$. And here comes the thought: as long as our process is exchangeable, we can say that we do exact inference in some Bayesian model. We do not necessarily need to know what model is, but we know it exists! This is important as in what follows we will lose track of the underlying Bayesian model, but by maintaining the exchangeability property, we can be sure that there is one.
+
+
+### 2. Meta-learning
+
+
+Besides of Bayesian beauty, there is practical motivation for why we want to model exchangeable sequences. Many meta-learning problems can be framed as modelling unordered sets of objects which have some characteristic in common. For instance, in few-shot generative modelling, one might want to generate images that are somehow similar to the ones we're already given. 
+
+In our paper, we demonstrated some examples of using exchangeable models on learning tasks that require generalisation from short unordered sequences while modelling sequence variability. Those applications include conditional image generation, few-shot classification, and set anomaly detection.
+
+## BRUNO model
+
+Remember the example where $$x_1,\dots , x_n \sim \mathcal{N}_n(\mathbf 0, \mathbf \Sigma)$$ and $$\mathbf \Sigma$$ has an exchangeable structure? Essentially, this defines a very basic Gaussian process (GP) where its kernel is restricted to be exchangeable. As shown in the paper, this simplicity allows **a)** to derive recursive updates for the parameters of predictive distributions and **b)** to scale the process as $$O(N)$$ instead of $$O(N^3)$$ as in a common case. 
+
+While this clearly is an exchangeable model, it is way too simple to model complex observations, say when every $$x_i$$ is an image. <!---We need to pack the model with some more oomph. --> Thus, we need some deep learning power. Namely, we are looking for a mapping $$\,f: \mathcal{X} \rightarrow \mathcal{Z}$$ from an intricate space $$\mathcal{X} \in \mathbb R^D$$ to a simple latent space $$\mathcal{Z} \in \mathbb R^D$$. Then in this simple space, one could indeed make use of exchangeable GPs. Such a mapping, however, has to be bijective (that's why both $$\mathcal X$$ and $$\mathcal Z$$ have to live in $$\mathbb R^D$$\). This would guarantee that exchangeable GP in space $$\mathcal{Z}$$ corresponds to some exchangeable process in space $$\mathcal{X}$$ and the whole Bayesian reasoning of de Finetti holds for sequences in $$\mathcal{X}$$. 
+
+Luckily, there is a family of invertible neural nets architectures called [Normalizing Flows](https://arxiv.org/abs/1505.05770) that are used to transform simple densities $$p(z)$$ into complex densities $$p(x)$$ or the other way around. For our purpose, [Real NVP](https://arxiv.org/abs/1605.08803) suited most since **a)** its inverse mapping $$\,f^{-1}(\mathbf z)$$ is fast to compute, which is useful when generating samples and **b)** computing the Jacobian $$\partial f(\mathbf x)/ \partial \mathbf x$$ is also fast, so we can quicky evaluate $$p(\mathbf x)$$ from $$p(\mathbf z)$$ using the change of variable formula:
+
+$$p(\mathbf x) = p(\mathbf z) \Bigg| \det \frac{\partial f(\mathbf x)}{\partial \mathbf x}\Bigg|.$$
+
+Essentially, those are all the ingredients! A powerful bijection $$f: \mathcal{X} \rightarrow \mathcal{Z}$$ plus $$D$$ independent exchangeable GPs<sup>&nbsp;[1](#myfootnote1)</sup> in the latent space $$\mathcal Z$$  make a nice exchangeable model which we called BRUNO: **B**ayesian **R**ec**U**rrent **N**eural m**O**del (TBH, we just wanted to name it after Bruno de Finetti). Here is a schematic:
+
+![](/img/schematic.png)
+
+Because we have the predictive probabilities at every step, we can train BRUNO using MLE, where we maximise the likelihood of the inputs with respect to the Real NVP parameters and parameters of GPs kernels: $$\rho$$ and $$v$$ for every of the $$D$$ latent dimensions. 
+
+We train BRUNO on a dataset of i.i.d. sequences $$\{(\mathbf x_1, \mathbf x_2, .., \mathbf x_n)_i\}_{i=1..M}$$, where we assume that observations within a sequence are exchangeable. This assumption proved reasonable for sequences where observations belong to the same class. In this case, BRUNO should learn some class-specific features and also learn that those are correlated across the sequence. It appears to work well for the tasks of few-shot generation and classification, which we will look into next.
+
+
+<!---You can see this optimization process as the model looking for the features  in an image which allow it to generalize across sequences of images. Rather than a regular Real NVP, which is looking for a mapping to normalize the data, here the Real NVP is looking for features which correlate across the sequence and estimates the parameters for the variance and the correlation of those features. So this Real NVP has a harder task to fulfill than to just be a bijection between two distributions.-->
+
+## Experiments
+
+[Omniglot](https://github.com/brendenlake/omniglot) has become a standard dataset for testing few-shot learning algorithms. It is commonly referred to as the “transpose” of MNIST since it has a large number of character classes with only 20 examples per class. So if we train BRUNO on the same-class sequences from Omniglot's train set, we can easily test its few-shot performance on the unseen characters. 
+
+Below are a few examples of generated samples conditionally on an input sequence of unseen characters. The cool thing about BRUNO is that it doesn't need any retraining on classes it has never seen. We just need to feed BRUNO a test sequence of an arbitrary length and get our _n_-shot generated images as a result of sampling from a conditional distribution $$p(\mathbf x_{n+1} \mid \mathbf x_{1:n})$$.     
+
+![](/img/bruno/sample_test_197_0.png)|![](/img/bruno/sample_test_382_0.png)
+![](/img/bruno/sample_test_168_0.png)|![](/img/bruno/sample_test_323_0.png)
+
+<sup>An input sequence is shown in the top row and samples in the bottom 4 rows. Every column of the bottom subplot contains 4 samples from the predictive distribution conditioned on the input images up to and including that column. That is, the 1st column shows samples from the prior $$p(\mathbf x)$$ when no input image is given; the 2nd column shows samples from $$p(\mathbf x \mid \mathbf x_1)$$ where $$\mathbf x_1$$ is the 1st input image in the top row and so on.</sup>
+
+||
+
+We can use the very same model for image classification in a _n_-shot, _k_-way setup. From the test accuracies below, we see that BRUNO is doing okay, but not as good as [Matching Nets](https://arxiv.org/pdf/1606.04080.pdf). That's no surprise since BRUNO was trained as a generative model and may have wasted a lot of statistical power on modelling aspects of the data which are irrelevant for the classification task. However, if we now finetune BRUNO with a discriminative objective, i.e. maximising the likelihood of correct labels in few-shot classification episodes, its performance becomes a lot better.
+
+
+Model          | n=1,k=5         | n=5,k=5         | n=1,k=20        | n=5,k=20
+-------------- | :-------------: | :-------------: | :-------------: | :-------------:
+[Matching Nets](https://arxiv.org/pdf/1606.04080.pdf)  | 98.1%           | 98.9%           | 93.8%           | 98.5%
+BRUNO          | 86.3% | 95.6% | 69.2%| 87.7%
+BRUNO finetuned| 97.1% | 99.4% | 91.3% | 97.8%
+
+
+In the paper, we have a few other datasets also give an example on how BRUNO can be used for set anomaly detection in a stream of incoming data <sup>&nbsp;[2](#myfootnote2)</sup>.
+
+
+## Conclusion
+
+Exchangeability has only recently started gaining more attention in deep learning community and hopefully will go a long way. Latest works such as [Deep Sets](https://arxiv.org/abs/1703.06114), [Neural Statistician](https://arxiv.org/abs/1606.02185), 
+[Neural Processes](https://arxiv.org/abs/1807.01613) achive permutation invariance with respect to the inputs by aggregating their features, e.g. taking the mean across the sequence. Compared to these models, BRUNO has a different flavour: we want our model to strictly fullfill the definition of an exchangeable process such that de Finetti's theorem is invoked and we have our exact (albeit implicit) Bayesian inference carried out in the space of images. It sounds cool and it works well in practice, so we hope somebody might find it useful. 
+
+ 
+
+
+<!---One of the ways this model could be used, is for anomaly detection in a stream of incoming data. Imagine you are a company with a dataset of observations your users might be interested in. For example, you have a dataset of **even** MNIST digits. Now you can train BRUNO on this dataset. Once the model is trained, you can send the trained model over to the computing constrained smartphones of your users. 
+
+On their smartphones, the users can then use the meta-learned model to model their incoming stream of -- for example -- **odd** MNIST digits. Their phone needs only to look at every incoming observation once and update the recurrent equations, no gradients and only a constant amount of memory needed. After the recurrence is updated, the observation can be discarded from the memory, as the exchangeability property guarantees that the information will never be forgotten.
+
+At any point in time, the user can evaluate the predictive probability of an observation given the (possibly very large number of) past observations and for example detect anomalies in his stream of incoming data. Not only that, the user can sample the model fast on his smartphone, no gradients needed. He could use these samples to evaluate whether the model has captured the correlations in his data stream well, or maybe even for other applications. Because as far as the user considers, he just trained a generative model for a complex data modality in real time on his phone.
+
+As long as the dataset your company has is sufficiently close or encompassing the data stream of the user -- such as is the case with even and odd MNIST digits -- this setup should work. Note that although we focus in this paper on images as data modality, there is no underlying reason why this setup would not work for other data modalities where deep learning has been shown useful.-->
+
+## Code
+
+Our code is available on github: [github.com/IraKorshunova/bruno](https://github.com/IraKorshunova/bruno)
+
+## Notes
+
+<a name="myfootnote1">1</a>: We actually used Student-t process (TP), which is a generalisation of a GP. There is not much difference and both seem to work, though we found TPs easier to train.
+
+<a name="myfootnote2">2</a>: In all our experiments we used image data, however BRUNO can be used with any other data modality. It all depends on whether one uses convolutions or dense layers inside of Real NVP.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
