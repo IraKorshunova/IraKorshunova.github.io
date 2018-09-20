@@ -35,9 +35,10 @@ meaning that the joint probability remains the same under any permutation of the
 
 Obviously, i.i.d. sequences are exchangeable. However, the converse is false: exchangeable sequences can be correlated. 
 
->One textbook example of an exchangeable sequence is a sequence of $$x_1,\dots , x_n$$, which jointly has a multivariate normal distribution $$\mathcal{N}_n(\mathbf 0, \mathbf \Sigma)$$ with a *compound symmetry* -- or we will simply call it *exchangeable* -- covariance structure:
+
+> One textbook example of an exchangeable sequence is a sequence of $$x_1,\dots , x_n$$, which jointly has a multivariate normal distribution $$\mathcal{N}_n(\mathbf 0, \mathbf \Sigma)$$ with a *compound symmetry* -- or we will simply call it *exchangeable* -- covariance structure:
 >
->$$\mathbf \Sigma = \begin{pmatrix}
+> $$\mathbf \Sigma = \begin{pmatrix}
     v & \rho & \ldots & \rho & \rho \\
     \rho & v & \ldots & \rho & \rho \\
     \vdots & \vdots & \ldots & \vdots & \vdots \\
@@ -45,7 +46,7 @@ Obviously, i.i.d. sequences are exchangeable. However, the converse is false: ex
     \rho & \rho & \ldots & \rho & v
 \end{pmatrix}, $$
 >
->where $$0 \le \rho < v$$. 
+> where $$0 \le \rho < v$$. 
 
 **De Finetti’s theorem** states that every exchangeable process -- which is an infinite sequence of random variables -- satisfies the following:
 
@@ -53,7 +54,7 @@ $$p(x_1,\dots,x_n)= \int p(\theta) \prod_{i=1}^n{p(x_i|\theta)d\theta}, \quad\qu
 
 where $$\theta$$ is some parameter conditioned on which $$x_i$$'s become i.i.d.
 
->In the Gaussian example above, one can show that $$x_1,\dots, x_n$$ are i.i.d. with $$x_i \sim \mathcal N (\theta, v − \rho)$$ conditioned on $$\theta \sim \mathcal N (0, \rho)$$.
+> In the Gaussian example above, one can show that $$x_1,\dots, x_n$$ are i.i.d. with $$x_i \sim \mathcal N (\theta, v − \rho)$$ conditioned on $$\theta \sim \mathcal N (0, \rho)$$.
 
 By conditioning both sides of Eq.1 on $$x_{1:n-1}$$, de Finetti's theorem can be written in terms of predictive distributions:  
 
@@ -79,7 +80,7 @@ Luckily, there is a family of invertible neural nets architectures called [Norma
 
 $$p(\mathbf x) = p(\mathbf z) \Bigg| \det \frac{\partial f(\mathbf x)}{\partial \mathbf x}\Bigg|.$$
 
-Essentially, those are all the ingredients! A powerful bijection $$f: \mathcal{X} \rightarrow \mathcal{Z}$$ plus $$D$$ independent exchangeable GPs<sup>&nbsp;[1](#myfootnote1)</sup> in the latent space $$\mathcal Z$$  make a nice exchangeable model which we called BRUNO: **B**ayesian **R**ec**U**rrent **N**eural m**O**del (TBH, we just wanted to name it after Bruno de Finetti). Here is a schematic:
+Essentially, those are all the ingredients! A powerful bijection $$f: \mathcal{X} \rightarrow \mathcal{Z}$$ plus $$D$$ independent exchangeable GPs [^1] in the latent space $$\mathcal Z$$  make a nice exchangeable model which we called BRUNO: **B**ayesian **R**ec**U**rrent **N**eural m**O**del (TBH, we just wanted to name it after Bruno de Finetti). Here is a schematic:
 
 ![](/img/bruno/schematic_gp.png)
 
@@ -101,7 +102,7 @@ Below are a few examples of generated samples conditionally on an input sequence
 
 <sup>An input sequence is shown in the top row and samples in the bottom 4 rows. Every column of the bottom subplot contains 4 samples from the predictive distribution conditioned on the input images up to and including that column. That is, the 1st column shows samples from the prior $$p(\mathbf x)$$ when no input image is given; the 2nd column shows samples from $$p(\mathbf x \mid \mathbf x_1)$$ where $$\mathbf x_1$$ is the 1st input image in the top row and so on.</sup>
 
-||
+---
 
 We can use the very same model for image classification in a _n_-shot, _k_-way setup. From the test accuracies below, we see that BRUNO is doing okay, but not as good as [Matching Nets](https://arxiv.org/pdf/1606.04080.pdf). That's no surprise since BRUNO was trained as a generative model and may have wasted a lot of statistical power on modelling aspects of the data which are irrelevant for the classification task. However, if we now finetune BRUNO with a discriminative objective, i.e. maximising the likelihood of correct labels in few-shot classification episodes, its performance becomes a lot better.
 
@@ -113,7 +114,7 @@ BRUNO          | 86.3% | 95.6% | 69.2%| 87.7%
 BRUNO finetuned| 97.1% | 99.4% | 91.3% | 97.8%
 
 
-In the paper, we have a few other datasets also give an example on how BRUNO can be used for set anomaly detection in a stream of incoming data <sup>&nbsp;[2](#myfootnote2)</sup>.
+In the paper, we have a few other datasets also give an example on how BRUNO can be used for set anomaly detection in a stream of incoming data [^2].
 
 
 ## Conclusion
@@ -132,15 +133,16 @@ At any point in time, the user can evaluate the predictive probability of an obs
 
 As long as the dataset your company has is sufficiently close or encompassing the data stream of the user -- such as is the case with even and odd MNIST digits -- this setup should work. Note that although we focus in this paper on images as data modality, there is no underlying reason why this setup would not work for other data modalities where deep learning has been shown useful.-->
 
-## Code
+### Code
 
 Our code is available on github: [github.com/IraKorshunova/bruno](https://github.com/IraKorshunova/bruno)
 
-## Notes
+### Notes
 
-<a name="myfootnote1">1</a>: We actually used Student-t process (TP), which is a generalisation of a GP. There is not much difference and both seem to work, though we found TPs easier to train.
+[^1]: We actually used Student-t process (TP), which is a generalisation of a GP. There is not much difference and both seem to work, though we found TPs easier to train.
 
-<a name="myfootnote2">2</a>: In all our experiments we used image data, however BRUNO can be used with any other data modality. It all depends on whether one uses convolutions or dense layers inside of Real NVP.
+[^2]: In all our experiments we used image data, however BRUNO can be used with any other data modality. It all depends on whether one uses convolutions or dense layers inside of Real NVP.
+
 
 
 
