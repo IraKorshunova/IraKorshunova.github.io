@@ -17,15 +17,15 @@ where we presented a *provably exchangeable* model whose:
 
 * predictive distribution $$p(x_n \mid x_{1:n-1})$$ is tractable to evaluate and can be sampled from with a linear complexity in the number of data points we condition on
 * training does not require variational approximations
-* memory complexity is constant thanks to its recurrent nature, i.e. after processing an observation $$x_i$$ we don't have to store it in memory.
+* memory complexity is constant thanks to its recurrent nature, i.e. after an observation $$x_i$$ is processed, it can be discarded from memory.
 
 ## Motivation
 
-We will give a two ways to motivate why BRUNO is an interesting model. 
+We will present two ways to motivate why BRUNO is an interesting model. 
 
 ### 1. Exchangeability and Bayesian computations
 
-We started from a problem posed in [this inFERENCe blogpost](https://www.inference.vc/exchangeable-processes-via-neural-networks/): is it possible to design an exchangeable RNN? [Ferenc](https://www.inference.vc/) explains it very well so please go ahead and read his blogpost. Below we will briefly repeat main definitions and how exchangeability is connected to Bayesian inference. 
+We started from a problem posed in [this inFERENCe blog post](https://www.inference.vc/exchangeable-processes-via-neural-networks/): is it possible to design an exchangeable RNN? [Ferenc](https://www.inference.vc/) explains it very well so please go ahead and read his post. Below we will briefly repeat main definitions and how exchangeability is connected to Bayesian inference. 
 
 A sequence of random variables $$x_1, x_2, x_3, \dots$$ is said to be exchangeable if for all $$n$$ and all permutations $$\pi$$
 
@@ -33,10 +33,10 @@ $$p(x_1,\dots , x_n) = p(x_{\pi(1)}, \dots, x_{\pi(n)}),$$
 
 meaning that the joint probability remains the same under any permutation of the sequence. <!---So the order in which you observe the sequence does not change the probability of the sequence.-->
 
-Obviously, i.i.d. sequences are exchangeable. However, the converse is false: exchangeable sequences can be correlated. 
+Obviously, i.i.d. random variables are exchangeable. However, the converse is false: exchangeable random variables can be correlated. 
 
 
-> One textbook example of an exchangeable sequence is a sequence of $$x_1,\dots , x_n$$, which jointly has a multivariate normal distribution $$\mathcal{N}_n(\mathbf 0, \mathbf \Sigma)$$ with a *compound symmetry* -- or we will simply call it *exchangeable* -- covariance structure:
+> One textbook example of an exchangeable sequence is a sequence of variables $$x_1,\dots , x_n$$, which jointly have a multivariate normal distribution $$\mathcal{N}_n(\mathbf 0, \mathbf \Sigma)$$ with a *compound symmetry* -- or we will simply call it *exchangeable* -- covariance structure:
 >
 > $$\mathbf \Sigma = \begin{pmatrix}
     v & \rho & \ldots & \rho & \rho \\
@@ -48,7 +48,7 @@ Obviously, i.i.d. sequences are exchangeable. However, the converse is false: ex
 >
 > where $$0 \le \rho < v$$. 
 
-**De Finetti’s theorem** states that every exchangeable process -- which is an infinite sequence of random variables -- satisfies the following:
+**De Finetti’s theorem** states that every exchangeable process (an infinite sequence of random variables) satisfies the following:
 
 $$p(x_1,\dots,x_n)= \int p(\theta) \prod_{i=1}^n{p(x_i|\theta)d\theta}, \quad\quad\quad(1)$$
 
@@ -60,23 +60,22 @@ By conditioning both sides of Eq.1 on $$x_{1:n-1}$$, de Finetti's theorem can be
 
 $$p(x_n \mid x_{1:n-1})= \int p(x_{n}\mid \theta)p(\theta \mid x_{1:n-1})d\theta. $$
 
-This is exactly the posterior predictive distribution, where we marginalised the likelihood of $$x_n$$ given $$\theta$$ with respect to the posterior distribution of $$\theta$$. And here comes the thought: as long as our process is exchangeable, we can say that we do exact inference in some Bayesian model. We do not necessarily need to know what model is, but we know it exists! This is important as in what follows we will lose track of the underlying Bayesian model, but by maintaining the exchangeability property, we can be sure that there is one.
+This is exactly the posterior predictive distribution, where we marginalised the likelihood of $$x_n$$ given $$\theta$$ with respect to the posterior distribution of $$\theta$$. A possible interpretation of this result can be the following: having a predictive distribution from an exchangeable process is implicitly the same as doing an exact inference in _some_ Bayesian model. Thus, if we have an exchangeable process, we might not know what the corresponding Bayesian model is, but we can be sure it exists. This is important since in what follows we will lose track of the Bayesian model, but by maintaining the exchangeability property, we can be sure that there is one.
 
 
 ### 2. Meta-learning
 
 
-Besides of Bayesian beauty, there is practical motivation for why we want to model exchangeable sequences. Many meta-learning problems can be framed as modelling unordered sets of objects which have some characteristic in common. For instance, in few-shot generative modelling, one might want to generate images that are somehow similar to the ones we're already given. 
+Besides of the Bayesian beauty, there are practical reasons for why we want to model exchangeable sequences. Many meta-learning problems can be framed as modelling unordered sets of objects which have some characteristic in common. For instance, in few-shot generative modelling, one might want to generate images that are somehow similar to the ones we already have. More examples are to follow in the Experiments part of this post. 
 
-In our paper, we demonstrated some examples of using exchangeable models on learning tasks that require generalisation from short unordered sequences while modelling sequence variability. Those applications include conditional image generation, few-shot classification, and set anomaly detection.
 
-## BRUNO model
+## BRUNO model 
 
-Remember the example where $$x_1,\dots , x_n \sim \mathcal{N}_n(\mathbf 0, \mathbf \Sigma)$$ and $$\mathbf \Sigma$$ has an exchangeable structure? Essentially, this defines a very basic Gaussian process (GP) where its kernel is restricted to be exchangeable. As shown in the paper, this simplicity allows **a)** to derive recursive updates for the parameters of predictive distributions and **b)** to scale the process as $$O(N)$$ instead of $$O(N^3)$$ as in a common case. 
+Remember the example where $$x_1,\dots , x_n \sim \mathcal{N}_n(\mathbf 0, \mathbf \Sigma)$$ and $$\mathbf \Sigma$$ has an exchangeable structure? Essentially, this defines a very basic Gaussian process (GP) where its kernel is restricted to be exchangeable. As shown in the paper, this simplicity allows **(a)** to derive recursive updates for the parameters of predictive distributions, and **(b)** to scale the process as $$O(N)$$ instead of $$O(N^3)$$ as in a common case. 
 
 While this clearly is an exchangeable model, it is way too simple to model complex observations, say when every $$x_i$$ is an image. <!---We need to pack the model with some more oomph. --> Thus, we need some deep learning power. Namely, we are looking for a mapping $$\,f: \mathcal{X} \rightarrow \mathcal{Z}$$ from an intricate space $$\mathcal{X} \in \mathbb R^D$$ to a simple latent space $$\mathcal{Z} \in \mathbb R^D$$. Then in this simple space, one could indeed make use of exchangeable GPs. Such a mapping, however, has to be bijective (that's why both $$\mathcal X$$ and $$\mathcal Z$$ have to live in $$\mathbb R^D$$\). This would guarantee that exchangeable GP in space $$\mathcal{Z}$$ corresponds to some exchangeable process in space $$\mathcal{X}$$ and the whole Bayesian reasoning of de Finetti holds for sequences in $$\mathcal{X}$$. 
 
-Luckily, there is a family of invertible neural nets architectures called [Normalizing Flows](https://arxiv.org/abs/1505.05770) that are used to transform simple densities $$p(z)$$ into complex densities $$p(x)$$ or the other way around. For our purpose, [Real NVP](https://arxiv.org/abs/1605.08803) suited most since **a)** its inverse mapping $$\,f^{-1}(\mathbf z)$$ is fast to compute, which is useful when generating samples and **b)** computing the Jacobian $$\partial f(\mathbf x)/ \partial \mathbf x$$ is also fast, so we can quicky evaluate $$p(\mathbf x)$$ from $$p(\mathbf z)$$ using the change of variable formula:
+Luckily, there is a family of invertible neural nets architectures called [Normalizing Flows](https://arxiv.org/abs/1505.05770) that are used to transform simple densities $$p(z)$$ into complex densities $$p(x)$$ or the other way around. For our purpose, [Real NVP](https://arxiv.org/abs/1605.08803) suited most since **(a)** its inverse mapping $$\,f^{-1}(\mathbf z)$$ is fast to compute, which is useful when generating samples, and **(b)** computing the Jacobian $$\partial f(\mathbf x)/ \partial \mathbf x$$ is also fast, so we can quicky evaluate $$p(\mathbf x)$$ from $$p(\mathbf z)$$ using the change of variable formula:
 
 $$p(\mathbf x) = p(\mathbf z) \Bigg| \det \frac{\partial f(\mathbf x)}{\partial \mathbf x}\Bigg|.$$
 
