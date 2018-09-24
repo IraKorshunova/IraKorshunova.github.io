@@ -135,7 +135,7 @@ Our code is available on github: [github.com/IraKorshunova/bruno](https://github
 
 ### Notes
 
-[^1]: If you can be very patient with sampling, then autoregressive models such as [MAF](https://arxiv.org/abs/1705.07057) might perform better. We have't tried them since Real NVP was doing well already. Neither, we tried [Glow](https://arxiv.org/abs/1807.03039) -- an improved version of Real NVP. 
+[^1]: If you can be very patient with sampling, then autoregressive models such as [MAF](https://arxiv.org/abs/1705.07057) might perform better. We haven't tried them since Real NVP was already doing well. Neither we've tried [Glow](https://arxiv.org/abs/1807.03039) -- an improved version of Real NVP. 
 
 [^2]: We actually used Student-t process (TP), which is a generalisation of a GP. There is not much difference and both seem to work, though we found TPs easier to train.
 
