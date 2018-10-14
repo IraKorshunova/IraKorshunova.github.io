@@ -1,6 +1,5 @@
 ---
 layout:     post
-hidden:     true
 title:      "BRUNO: A Deep Recurrent Model for Exchangeable Data"
 date:       2018-09-17 12:00:00
 author:     "Ira Korshunova"
@@ -125,8 +124,7 @@ Another application for BRUNO can be set anomaly detection in a stream of incomi
 
 ## Conclusion
 
-Exchangeability has only recently started gaining more attention in deep learning community and hopefully will go a long way. Latest works such as [Deep Sets](https://arxiv.org/abs/1703.06114), [Neural Statistician](https://arxiv.org/abs/1606.02185), 
-[Neural Processes](https://arxiv.org/abs/1807.01613) achive permutation invariance with respect to the inputs by aggregating their features, e.g. taking the mean across the sequence. Compared to these models, BRUNO has a different flavour: we want our model to strictly fullfill the definition of an exchangeable process such that de Finetti's theorem is invoked and we have our exact (albeit implicit) Bayesian inference carried out in the space of images. It sounds cool and it works well in practice, so we hope somebody finds it useful. 
+Exchangeability has recently started gaining more attention in deep learning community and hopefully will go a long way. Some relevant papers include [Deep Sets](https://arxiv.org/abs/1703.06114), [Neural Statistician](https://arxiv.org/abs/1606.02185) and [Neural Processes](https://arxiv.org/abs/1807.01613). Compared to them, BRUNO has a bit different flavour: it is an exchangeable process with an intricate analytic form [^4] defined in the space of high dimensional, complex observations, e.g. images. However, because of a $$\mathcal GP$$ + Real NVP construction, this processs is easy to work with and it performs well in practice, so we hope somebody will find it useful. 
 
  
 ### Code
@@ -135,11 +133,13 @@ Our code is available on github: [github.com/IraKorshunova/bruno](https://github
 
 ### Notes
 
-[^1]: If you can be very patient with sampling, then autoregressive models such as [MAF](https://arxiv.org/abs/1705.07057) might perform better. We haven't tried them since Real NVP was already doing well. Neither we've tried [Glow](https://arxiv.org/abs/1807.03039) -- an improved version of Real NVP. 
+[^1]: If you can be patient with sampling, then autoregressive models such as [MAF](https://arxiv.org/abs/1705.07057) might perform better. We haven't tried them since Real NVP was already doing well. Neither we've tried [Glow](https://arxiv.org/abs/1807.03039) or continuous  normalizing flows like [FFJORD](https://arxiv.org/abs/1810.01367), which are likely to be much better.
 
 [^2]: We actually used Student-t process (TP), which is a generalisation of a GP. There is not much difference and both seem to work, though we found TPs easier to train.
 
 [^3]: In all our experiments we used image data, however BRUNO can be used with any other data modality. It all depends on whether one uses convolutions or dense layers inside of Real NVP.
+
+[^4]: If we somehow get an analytic form of Jacobians from a tensorflow graph, then it would be possible to recover the form of distributions in $$\mathcal X$$. Likely, it wouldn't help us much.
 
 
 
